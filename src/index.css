@@ -1843,6 +1843,18 @@ a {
   color: var(--foundation-blue-normal);
 }
 
+.donate-button:disabled {
+  border-color: #d8ecff;
+  background: #f4faff;
+  color: #8ebff3;
+}
+
+.donate-button.is-donated {
+  border-color: #d9d9d9;
+  background: #f8f8f8;
+  color: #8f8f8f;
+}
+
 .style-button {
   border: 0;
   background: var(--foundation-blue-normal);

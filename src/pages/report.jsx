@@ -5,6 +5,7 @@ import heartIcon from "../assets/image/icon/Heart_01.png";
 import infoIcon from "../assets/image/icon/Info.png";
 import leafIcon from "../assets/image/icon/Leaf.png";
 import { getClothes } from "../api/clothes";
+import { createDonation } from "../api/donations";
 import BottomNav from "../components/bottomNav.jsx";
 
 const unwornItems = [
@@ -18,6 +19,8 @@ function Report() {
   const [isCarbonGuideOpen, setIsCarbonGuideOpen] = useState(false);
   const [isUnwornGuideOpen, setIsUnwornGuideOpen] = useState(false);
   const [reportClothes, setReportClothes] = useState([]);
+  const [donatingIds, setDonatingIds] = useState([]);
+  const [donatedIds, setDonatedIds] = useState([]);
   const displayUnwornItems =
     reportClothes.length > 0
       ? reportClothes.filter((item) => item.unwornDays >= 30).slice(0, 2)
@@ -39,6 +42,21 @@ function Report() {
 
   function openStyling(item) {
     navigate("/styling", { state: item });
+  }
+
+  async function donateItem(item) {
+    if (donatingIds.includes(item.id) || donatedIds.includes(item.id)) return;
+
+    setDonatingIds((prevIds) => [...prevIds, item.id]);
+
+    try {
+      await createDonation(item.id);
+      setDonatedIds((prevIds) => [...prevIds, item.id]);
+    } catch (error) {
+      console.log("기부 등록 실패:", error.message);
+    } finally {
+      setDonatingIds((prevIds) => prevIds.filter((id) => id !== item.id));
+    }
   }
 
   return (
@@ -223,64 +241,71 @@ function Report() {
         </div>
 
         <div className="report-item-grid">
-          {displayUnwornItems.map((item) => (
-            <article
-              className="report-item-card"
-              key={item.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => openClothesInfo(item)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  openClothesInfo(item);
-                }
-              }}
-            >
-              <div className="report-item-card__image">
-                {item.image && <img src={item.image} alt="" />}
-                <span>{item.days}</span>
-              </div>
-              <div className="report-item-card__body">
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>
-                    {[item.category, item.colorName ?? item.color, item.season ?? item.size]
-                      .filter(Boolean)
-                      .join("   ")}
-                  </p>
+          {displayUnwornItems.map((item) => {
+            const isDonating = donatingIds.includes(item.id);
+            const isDonated = donatedIds.includes(item.id);
+
+            return (
+              <article
+                className="report-item-card"
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openClothesInfo(item)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openClothesInfo(item);
+                  }
+                }}
+              >
+                <div className="report-item-card__image">
+                  {item.image && <img src={item.image} alt="" />}
+                  <span>{item.days}</span>
                 </div>
-                <button
-                  type="button"
-                  aria-label={`${item.title} 좋아요`}
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <img src={heartIcon} alt="" />
-                </button>
-              </div>
-              <div className="report-item-card__actions">
-                <button
-                  className="donate-button"
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  기부하기
-                </button>
-                <button
-                  className="style-button"
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    openStyling(item);
-                  }}
-                >
-                  스타일링 하기
-                </button>
-              </div>
-            </article>
-          ))}
+                <div className="report-item-card__body">
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>
+                      {[item.category, item.colorName ?? item.color, item.season ?? item.size]
+                        .filter(Boolean)
+                        .join("   ")}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label={`${item.title} 좋아요`}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <img src={heartIcon} alt="" />
+                  </button>
+                </div>
+                <div className="report-item-card__actions">
+                  <button
+                    className={`donate-button ${isDonated ? "is-donated" : ""}`}
+                    type="button"
+                    disabled={isDonating || isDonated}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      donateItem(item);
+                    }}
+                  >
+                    {isDonating ? "기부 중..." : isDonated ? "기부 완료" : "기부하기"}
+                  </button>
+                  <button
+                    className="style-button"
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      openStyling(item);
+                    }}
+                  >
+                    스타일링 하기
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 
