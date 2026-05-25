@@ -896,11 +896,12 @@ a {
   bottom: 0;
   z-index: 34;
   width: min(393px, 100vw);
-  height: 78px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  height: 82px;
+  display: flex;
   align-items: center;
-  padding: 8px 36px 13px;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 28px 15px;
   border-top: 1px solid #f0f0f0;
   background: #ffffff;
   box-shadow:
@@ -910,17 +911,25 @@ a {
 }
 
 .bottom-nav__item {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
+  width: 86px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 8px;
   color: #b4b4b4;
   font-size: 10px;
   font-weight: 800;
+  line-height: 1;
 }
 
 .bottom-nav__icon {
-  width: 24px;
-  height: 24px;
+  width: 23px;
+  height: 23px;
+  display: block;
+  flex: 0 0 auto;
   object-fit: contain;
   opacity: 0.42;
   filter: grayscale(1);
@@ -928,9 +937,15 @@ a {
 
 .bottom-nav__item p {
   margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bottom-nav__item.active {
+  background: #eef7ff;
   color: var(--foundation-blue-normal);
 }
 
