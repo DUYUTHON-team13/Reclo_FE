@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import Closet from "./pages/closet";
@@ -13,10 +13,13 @@ import Report from "./pages/report";
 import Start from "./pages/start";
 import Styling from "./pages/styling";
 
-function App() {
+function AppRoutes() {
+  const location = useLocation();
+  const backgroundLocation = location.state?.backgroundLocation;
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <>
+      <Routes location={backgroundLocation || location}>
         <Route path="/" element={<Start />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/closet" element={<Closet />} />
@@ -30,6 +33,20 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route path="/styling" element={<Styling />} />
       </Routes>
+
+      {backgroundLocation && (
+        <Routes>
+          <Route path="/clothes-info" element={<ClothesInfo />} />
+        </Routes>
+      )}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }

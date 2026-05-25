@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import dragIcon from "../assets/image/icon/Drag_Horizontal.png";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import infoIcon from "../assets/image/icon/Info.png";
@@ -16,6 +16,7 @@ const unwornItems = [
 
 function Report() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isUsageGuideOpen, setIsUsageGuideOpen] = useState(false);
   const [isCarbonGuideOpen, setIsCarbonGuideOpen] = useState(false);
   const [isUnwornGuideOpen, setIsUnwornGuideOpen] = useState(false);
@@ -57,7 +58,13 @@ function Report() {
   }, []);
 
   function openClothesInfo(item) {
-    navigate("/clothes-info", { state: { ...item, from: "report" } });
+    navigate("/clothes-info", {
+      state: {
+        ...item,
+        from: "report",
+        backgroundLocation: location,
+      },
+    });
   }
 
   function openStyling(item) {
