@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import closeIcon from "../assets/image/icon/곱표.png";
+import backIcon from "../assets/image/icon/돌아가기.png";
 import { deleteClothing, updateClothing } from "../api/clothes";
 
 const typeOptions = ["상의", "하의", "아우터", "신발"];
@@ -266,7 +267,7 @@ function Delete() {
         aria-label="뒤로가기"
         onClick={() => navigate(-1)}
       >
-        ←
+        <img src={backIcon} alt="뒤로가기" />
       </button>
 
       <h1 className="delete-title">수정하기</h1>

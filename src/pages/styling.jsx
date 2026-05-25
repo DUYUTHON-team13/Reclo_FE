@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
+import backIcon from "../assets/image/icon/돌아가기.png";
 import { createRecommendationWithItem } from "../api/clothes";
 import { createWearLog } from "../api/wearLogs";
 
@@ -28,11 +29,6 @@ function Styling() {
     let isMounted = true;
     let timerId;
     const clothingId = state?.clothingId ?? state?.id;
-
-    setIsComplete(false);
-    setRecommendation(null);
-    setRecommendationPages([]);
-    setActiveRecommendationIndex(0);
 
     async function loadRecommendation() {
       if (!clothingId) {
@@ -132,7 +128,8 @@ function Styling() {
         aria-label="뒤로가기"
         onClick={() => navigate(-1)}
       >
-        ←
+        <img src={backIcon} alt="뒤로가기" />
+
       </button>
 
       {!isComplete ? (

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import searchIcon from "../assets/image/icon/Search_Magnifying_Glass.png";
+import backIcon from "../assets/image/icon/돌아가기.png";
 import { getClothes } from "../api/clothes";
 import { createWearLog } from "../api/wearLogs";
 
@@ -146,7 +147,7 @@ function TodayUpload() {
       </section>
 
       <Link className="today-upload-back" to="/home" aria-label="뒤로가기">
-        ←
+        <img src={backIcon} alt="뒤로가기" />
       </Link>
 
       {isConfirmStep ? (

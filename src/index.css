@@ -720,6 +720,8 @@ letter-spacing: -0.308px;
 }
 
 .clothing-card {
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   background: #f8f8f8;
   overflow: hidden;
@@ -730,6 +732,7 @@ letter-spacing: -0.308px;
   height: 119px;
   position: relative;
   background: #e5e5e5;
+  flex-shrink: 0;
 }
 
 .clothing-card__image img {
@@ -756,12 +759,24 @@ letter-spacing: -0.308px;
   justify-content: space-between;
   gap: 8px;
   padding: 10px 10px 8px;
+  min-height: 62px;
+}
+
+.clothing-card__body > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .clothing-card__body h3 {
   margin: 0;
   font-size: 12px;
   font-weight: 900;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .clothing-card__body p {
@@ -769,6 +784,11 @@ letter-spacing: -0.308px;
   color: #929292;
   font-size: 10px;
   font-weight: 700;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .clothing-card__body button {
@@ -777,6 +797,7 @@ letter-spacing: -0.308px;
   justify-content: center;
   border: 0;
   background: transparent;
+  flex-shrink: 0;
 }
 
 .clothing-card__heart {
@@ -794,6 +815,7 @@ letter-spacing: -0.308px;
   height: 34px;
   margin: 0 10px 10px;
   border-radius: 7px;
+  margin-top: auto;
 }
 
 .saving-banner {
@@ -1374,10 +1396,18 @@ letter-spacing: -0.308px;
 
 .today-upload-back {
   display: inline-flex;
+  width: 28px;
+  height: 28px;
   margin-top: 5px;
-  color: #6b6b6b;
-  font-size: 24px;
-  line-height: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.today-upload-back img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
 }
 
 .today-upload-title {
@@ -2288,9 +2318,14 @@ letter-spacing: -0.308px;
   place-items: center;
   border: 0;
   background: transparent;
-  color: #5b5b5b;
-  font-size: 24px;
-  line-height: 1;
+  padding: 0;
+}
+
+.add-clothes-back img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
 }
 
 .add-clothes-title {
@@ -2396,6 +2431,11 @@ letter-spacing: -0.308px;
 .add-ai-page .add-clothes-title,
 .add-info-page .add-clothes-title {
   margin-bottom: 34px;
+}
+
+.add-info-page {
+  position: relative;
+  padding-bottom: 148px;
 }
 
 .ai-check-preview {
@@ -2525,6 +2565,24 @@ letter-spacing: -0.308px;
   height: 12px;
   object-fit: contain;
   opacity: 0.25;
+}
+
+.add-info-actions-bg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 46px 34px;
+  background: #ffffff;
+  box-shadow: 0 -10px 28px rgba(255, 255, 255, 0.96);
+  z-index: 2;
+}
+
+.add-info-page .add-info-actions {
+  position: static;
+  left: auto;
+  right: auto;
+  bottom: auto;
 }
 
 .add-info-next:disabled {

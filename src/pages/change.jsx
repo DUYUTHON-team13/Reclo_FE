@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import backIcon from "../assets/image/icon/돌아가기.png";
 
 const typeOptions = ["상의", "하의", "아우터", "신발"];
 const seasonOptions = ["봄", "여름", "가을", "겨울"];
@@ -108,7 +109,7 @@ function Change() {
         aria-label="뒤로가기"
         onClick={() => navigate(-1)}
       >
-        ←
+        <img src={backIcon} alt="뒤로가기" />
       </button>
 
       <h1 className="change-title">
