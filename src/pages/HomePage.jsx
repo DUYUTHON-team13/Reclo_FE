@@ -7,6 +7,7 @@ import {
   getCurrentTodayRecommendation,
   getNextTodayRecommendation,
 } from "../api/clothes";
+import { getWeeklyCarbonSavingsSummary } from "../api/reports";
 import { getCurrentWeather } from "../api/weather";
 import { createWearLog } from "../api/wearLogs";
 import BottomNav from "../components/bottomNav.jsx";
@@ -36,6 +37,7 @@ function HomePage() {
   const [recommendedOutfitItems, setRecommendedOutfitItems] = useState([]);
   const [isLoadingNextRecommendation, setIsLoadingNextRecommendation] = useState(false);
   const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
+  const [weeklyCarbonSummary, setWeeklyCarbonSummary] = useState(null);
   const [toastMessage, setToastMessage] = useState(location.state?.toast ?? "");
   const displayRecommendedItems =
     recommendedOutfitItems.length > 0 ? recommendedOutfitItems : recommendedItems;
@@ -74,6 +76,14 @@ function HomePage() {
       })
       .catch((error) => {
         console.log("홈 의류 정보 불러오기 실패:", error.message);
+      });
+
+    getWeeklyCarbonSavingsSummary()
+      .then((summary) => {
+        setWeeklyCarbonSummary(summary);
+      })
+      .catch((error) => {
+        console.log("주간 탄소 절감 요약 불러오기 실패:", error.message);
       });
   }, []);
 
@@ -240,7 +250,7 @@ function HomePage() {
       </section>
 
       <Link className="saving-banner" to="/report">
-        일주일 동안 탄소배출량이 2.3kg 감소했어요
+        일주일 동안 탄소배출량이 {weeklyCarbonSummary?.savedKgCo2 ?? 2.3}kg 감소했어요
         <span>&gt;</span>
       </Link>
 
