@@ -6,6 +6,7 @@ import infoIcon from "../assets/image/icon/Info.png";
 import leafIcon from "../assets/image/icon/Leaf.png";
 import { getClothes } from "../api/clothes";
 import { createDonation } from "../api/donations";
+import { getCarbonSavingsReport } from "../api/reports";
 import BottomNav from "../components/bottomNav.jsx";
 
 const unwornItems = [
@@ -19,6 +20,7 @@ function Report() {
   const [isCarbonGuideOpen, setIsCarbonGuideOpen] = useState(false);
   const [isUnwornGuideOpen, setIsUnwornGuideOpen] = useState(false);
   const [reportClothes, setReportClothes] = useState([]);
+  const [carbonSavings, setCarbonSavings] = useState(null);
   const [donatingIds, setDonatingIds] = useState([]);
   const [donatedIds, setDonatedIds] = useState([]);
   const displayUnwornItems =
@@ -33,6 +35,14 @@ function Report() {
       })
       .catch((error) => {
         console.log("리포트 의류 정보 불러오기 실패:", error.message);
+      });
+
+    getCarbonSavingsReport()
+      .then((data) => {
+        setCarbonSavings(data);
+      })
+      .catch((error) => {
+        console.log("탄소 절감 리포트 불러오기 실패:", error.message);
       });
   }, []);
 
@@ -179,8 +189,9 @@ function Report() {
         <div className="report-card-title">
           <h2>탄소절감량 추이</h2>
           <p>
-            기존 의류 36벌을 재사용하여
-            <br />새 의류 생산 기준 약 <strong>90kg CO₂e</strong>를 절감했어요
+            기존 의류를 재사용하여
+            <br />새 의류 생산 기준 약{" "}
+            <strong>{carbonSavings?.totalSavedKgCo2 ?? 90}kg CO₂e</strong>를 절감했어요
           </p>
         </div>
         <button
@@ -213,20 +224,21 @@ function Report() {
               탄소절감량 = 재사용한 의류 수 × 의류 1벌당 탄소배출량
             </p>
             <p>
-              예시 기존 의류 재사용: 48벌 / 의류 1벌 생산 탄소배출: 2.5kg CO₂e
+              예시 기존 의류 재사용: 착용 기록 기반 / 의류 1벌 생산 탄소배출: 2.5kg CO₂e
             </p>
-            <strong>48 × 2.5 = 120</strong>
+            <strong>총 절감량: {carbonSavings?.totalSavedKgCo2 ?? 120}kg CO₂e</strong>
             <p>
               기존 옷을 계속 입음 = 새 옷 생산을 대체함
             </p>
             <p>
-              즉, 약 120kg CO₂e 절감
+              즉, 약 {carbonSavings?.totalSavedKgCo2 ?? 120}kg CO₂e 절감
             </p>
             <p>
               방식 1) “구매 회피(Avoided Purchase)” 모델을 사용했어요. 사용자가 기존 옷을 다시 활용하면 새 옷 구매를 줄였다고 보고, 따라서 생산 탄소 발생을 방지한 것으로 계산해요.
             </p>
             <p>
-              기존 의류 48벌을 재사용하여 새 의류 생산 기준 약 120kg CO₂e를 절감했어요.
+              기존 의류를 재사용하여 새 의류 생산 기준 약{" "}
+              {carbonSavings?.totalSavedKgCo2 ?? 120}kg CO₂e를 절감했어요.
             </p>
           </article>
         </section>
