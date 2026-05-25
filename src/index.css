@@ -176,9 +176,37 @@ a {
   background: #d7ebff;
 }
 
+.styling-loading-dots span {
+  animation: styling-loading-sweep 1.2s ease-in-out infinite;
+}
+
+.styling-loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.styling-loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
 .styling-loading-dots .active,
 .styling-page-dots .active {
   background: var(--foundation-blue-normal);
+}
+
+.styling-loading-dots .active {
+  background: #d7ebff;
+}
+
+@keyframes styling-loading-sweep {
+  0%,
+  100% {
+    background: #d7ebff;
+    transform: scale(0.9);
+  }
+  50% {
+    background: var(--foundation-blue-normal);
+    transform: scale(1.15);
+  }
 }
 
 .styling-result-title {
