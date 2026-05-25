@@ -418,13 +418,23 @@ a {
 }
 
 .outfit-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 14px;
+  margin: 0 -4px;
+  padding: 0 4px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.outfit-row::-webkit-scrollbar {
+  display: none;
 }
 
 .outfit-item {
-  min-width: 0;
+  flex: 0 0 96px;
+  min-width: 96px;
+  scroll-snap-align: start;
   text-align: center;
 }
 

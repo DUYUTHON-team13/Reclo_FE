@@ -155,7 +155,7 @@ function HomePage() {
         <div className="ai-card__top">
           <div>
             <h2>오늘의 AI추천 스타일링</h2>
-            <p>{todayRecommendation?.reason ?? "날씨와 맞는 옷을 추천해드릴게요"}</p>
+            <p>날씨에 맞는 옷을 추천드릴게요</p>
           </div>
           <button
             className={`like-button ${likedOutfit ? "is-liked" : ""}`}
