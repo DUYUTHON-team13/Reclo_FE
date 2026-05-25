@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import searchIcon from "../assets/image/icon/Search_Magnifying_Glass.png";
 import { getClothes } from "../api/clothes";
+import { createWearLog } from "../api/wearLogs";
 
 const todayItems = [
   {
@@ -50,6 +51,7 @@ function TodayUpload() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedIds, setSelectedIds] = useState([]);
   const [isConfirmStep, setIsConfirmStep] = useState(false);
+  const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
   const hasSelectedItems = selectedIds.length > 0;
   const displayItems = clothes.length > 0 ? clothes : todayItems;
   const filters = useMemo(() => {
@@ -103,19 +105,29 @@ function TodayUpload() {
     );
   }
 
-  function completeTodayLook() {
-    if (!hasSelectedItems) return;
+  async function completeTodayLook() {
+    if (!hasSelectedItems || isSubmittingWearLog) return;
 
     if (!isConfirmStep) {
       setIsConfirmStep(true);
       return;
     }
 
-    navigate("/home", {
-      state: {
-        toast: "오늘 입은 옷 업로드 완료",
-      },
-    });
+    setIsSubmittingWearLog(true);
+
+    try {
+      await createWearLog({ clothingIds: selectedIds });
+
+      navigate("/home", {
+        state: {
+          toast: "오늘 입은 옷 업로드 완료",
+        },
+      });
+    } catch (error) {
+      console.log("착용 의류 등록 실패:", error.message);
+    } finally {
+      setIsSubmittingWearLog(false);
+    }
   }
 
   return (
@@ -251,10 +263,10 @@ function TodayUpload() {
       <button
         className={`today-complete-button ${hasSelectedItems ? "is-active" : ""}`}
         type="button"
-        disabled={!hasSelectedItems}
+        disabled={!hasSelectedItems || isSubmittingWearLog}
         onClick={completeTodayLook}
       >
-        {isConfirmStep ? "등록 완료" : "선택 완료"}
+        {isSubmittingWearLog ? "등록 중..." : isConfirmStep ? "등록 완료" : "선택 완료"}
       </button>
     </main>
   );

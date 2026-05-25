@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import { createRecommendationWithItem } from "../api/clothes";
+import { createWearLog } from "../api/wearLogs";
 
 const outfitItems = [
   { label: "상의", type: "shirt", color: "#cbe6fb" },
@@ -18,6 +19,7 @@ function Styling() {
   const { state } = useLocation();
   const [isComplete, setIsComplete] = useState(false);
   const [recommendation, setRecommendation] = useState(null);
+  const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
   const displayOutfitItems =
     recommendation?.items?.length > 0
       ? recommendation.items.map((item) => ({
@@ -70,6 +72,33 @@ function Styling() {
       window.clearTimeout(timerId);
     };
   }, [state]);
+
+  async function wearStylingOutfit() {
+    const clothingIds =
+      recommendation?.items?.map((item) => item.clothingId ?? item.id) ??
+      (state?.id ? [state.id] : []);
+
+    if (isSubmittingWearLog || clothingIds.length === 0) return;
+
+    setIsSubmittingWearLog(true);
+
+    try {
+      await createWearLog({
+        clothingIds,
+        outfitId: recommendation?.id,
+      });
+
+      navigate("/home", {
+        state: {
+          toast: "오늘 입은 옷 업로드 완료",
+        },
+      });
+    } catch (error) {
+      console.log("스타일링 착용 등록 실패:", error.message);
+    } finally {
+      setIsSubmittingWearLog(false);
+    }
+  }
 
   return (
     <main className="mobile-page styling-page">
@@ -152,8 +181,13 @@ function Styling() {
             <button className="ghost-button" type="button" onClick={() => navigate(-1)}>
               나가기
             </button>
-            <button className="primary-button" type="button" onClick={() => navigate("/home")}>
-              착용하기
+            <button
+              className="primary-button"
+              type="button"
+              disabled={isSubmittingWearLog}
+              onClick={wearStylingOutfit}
+            >
+              {isSubmittingWearLog ? "등록 중..." : "착용하기"}
             </button>
           </div>
         </section>

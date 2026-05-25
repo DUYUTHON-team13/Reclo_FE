@@ -8,6 +8,7 @@ import {
   getNextTodayRecommendation,
 } from "../api/clothes";
 import { getCurrentWeather } from "../api/weather";
+import { createWearLog } from "../api/wearLogs";
 import BottomNav from "../components/bottomNav.jsx";
 import ClothingCard from "../components/clothingCard.jsx";
 
@@ -34,6 +35,7 @@ function HomePage() {
   const [todayRecommendation, setTodayRecommendation] = useState(null);
   const [recommendedOutfitItems, setRecommendedOutfitItems] = useState([]);
   const [isLoadingNextRecommendation, setIsLoadingNextRecommendation] = useState(false);
+  const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
   const [toastMessage, setToastMessage] = useState(location.state?.toast ?? "");
   const displayRecommendedItems =
     recommendedOutfitItems.length > 0 ? recommendedOutfitItems : recommendedItems;
@@ -110,6 +112,24 @@ function HomePage() {
     }
   }
 
+  async function wearRecommendedOutfit() {
+    if (isSubmittingWearLog || recommendedOutfitItems.length === 0) return;
+
+    setIsSubmittingWearLog(true);
+
+    try {
+      await createWearLog({
+        clothingIds: recommendedOutfitItems.map((item) => item.clothingId ?? item.id),
+        outfitId: todayRecommendation?.id,
+      });
+      setToastMessage("오늘 입은 옷 업로드 완료");
+    } catch (error) {
+      console.log("추천 코디 착용 등록 실패:", error.message);
+    } finally {
+      setIsSubmittingWearLog(false);
+    }
+  }
+
   return (
     <main className="mobile-page home-page">
       <section className="phone-status" aria-label="상태바">
@@ -173,8 +193,13 @@ function HomePage() {
           >
             {isLoadingNextRecommendation ? "불러오는 중..." : "다른 스타일링 보기"}
           </button>
-          <button className="primary-button" type="button">
-            착용하기
+          <button
+            className="primary-button"
+            type="button"
+            disabled={isSubmittingWearLog || recommendedOutfitItems.length === 0}
+            onClick={wearRecommendedOutfit}
+          >
+            {isSubmittingWearLog ? "등록 중..." : "착용하기"}
           </button>
         </div>
       </section>
