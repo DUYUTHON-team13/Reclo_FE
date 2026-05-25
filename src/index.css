@@ -1,9 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Modak&display=swap");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --foundation-blue-normal: #5fa9ff;
+  /* Blue */
+  --foundation-blue-normal: #61abff;
+  --foundation-blue-normal-hover: #579ae6;
+  --foundation-blue-light-hover: #e7f2ff;
+  --foundation-blue-light-active: #cee5ff;
+  --foundation-blue-dark-hover: #3a6799;
+
+  /* White */
+  --foundation-white-light: #ffffff;
+  --foundation-white-light-active: #fdfdfd;
+  --foundation-white-normal: #fafafa;
+  --foundation-white-normal-hover: #e1e1e1;
+  --foundation-white-normal-active: #c8c8c8;
+  --foundation-white-dark: #bcbcbc;
+  --foundation-white-dark-hover: #969696;
+  --foundation-white-dark-active: #707070;
+  --foundation-white-darker: #585858;
+
+  /* Grey */
+  --foundation-grey-light: #ededed;
+  --foundation-grey-light-hover: #e4e4e4;
+  --foundation-grey-light-active: #c8c8c8;
+  --foundation-grey-normal: #4d4d4d;
+  --foundation-grey-normal-active: #3e3e3e;
+  --foundation-grey-dark: #3a3a3a;
+  --foundation-grey-dark-hover: #2e2e2e;
+  --foundation-grey-darker: #1b1b1b;
+
+  /* Red */
+  --foundation-red-normal: #ff8080;
+
+  /* Neutral */
+  --neutral-800: #2c2c2c;
+  --black-600: #000000;
+
+  /* Shadow & Blur */
+  --shadow-10: 0 2px 12px #0000001a;
+  --blur-8: blur(8px);
+
+  /* Typography */
+  --font-title: "Modak", cursive;
+  --font-body: "Pretendard Variable", "Pretendard", sans-serif;
+
+  --text-title: 600 60px/80px var(--font-title);
+  --text-title-semibold: 600 20px/1.3 var(--font-body);
+  --text-body-semibold: 600 16px/1.5 var(--font-body);
+  --text-body-medium: 500 16px/32px var(--font-body);
+  --text-body-regular: 400 16px/1.3 var(--font-body);
+  --text-body-sm-semibold: 600 14px/1.5 var(--font-body);
+  --text-body-sm-regular: 400 14px/1.5 var(--font-body);
+  --text-body-sm-medium: 500 14px/1.5 var(--font-body);
+  --text-caption-medium: 500 12px/1.03 var(--font-body);
+  --text-caption-regular: 400 12px/1.2 var(--font-body);
 }
 
 body {
@@ -11,7 +66,7 @@ body {
   min-height: 100vh;
   background: #e9e9e9;
   color: #171717;
-  font-family: Arial, "Noto Sans KR", sans-serif;
+  font-family: "Pretendard Variable", "Pretendard", Arial, sans-serif;
 }
 
 button,
