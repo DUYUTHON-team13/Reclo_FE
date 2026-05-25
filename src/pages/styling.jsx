@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import { createRecommendationWithItem } from "../api/clothes";
@@ -17,18 +17,12 @@ const weatherLongitude = import.meta.env.VITE_WEATHER_LONGITUDE ?? 126.978;
 function Styling() {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const stylingCarouselRef = useRef(null);
   const [isComplete, setIsComplete] = useState(false);
   const [recommendation, setRecommendation] = useState(null);
+  const [recommendationPages, setRecommendationPages] = useState([]);
+  const [activeRecommendationIndex, setActiveRecommendationIndex] = useState(0);
   const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
-  const displayOutfitItems =
-    recommendation?.items?.length > 0
-      ? recommendation.items.map((item) => ({
-          label: item.name,
-          type: item.shape,
-          image: item.image,
-          color: "#e5e5e5",
-        }))
-      : outfitItems;
 
   useEffect(() => {
     let isMounted = true;
@@ -37,6 +31,8 @@ function Styling() {
 
     setIsComplete(false);
     setRecommendation(null);
+    setRecommendationPages([]);
+    setActiveRecommendationIndex(0);
 
     async function loadRecommendation() {
       if (!clothingId) {
@@ -47,14 +43,21 @@ function Styling() {
       }
 
       try {
-        const data = await createRecommendationWithItem({
-          clothingId,
-          latitude: weatherLatitude,
-          longitude: weatherLongitude,
-        });
+        const pages = [];
 
-        if (isMounted) {
-          setRecommendation(data);
+        for (let index = 0; index < 3; index += 1) {
+          const data = await createRecommendationWithItem({
+            clothingId,
+            latitude: weatherLatitude,
+            longitude: weatherLongitude,
+          });
+
+          pages.push(data);
+
+          if (isMounted) {
+            setRecommendation(data);
+            setRecommendationPages([...pages]);
+          }
         }
       } catch (error) {
         console.log("선택 옷 포함 추천 코디 생성 실패:", error.message);
@@ -72,6 +75,48 @@ function Styling() {
       window.clearTimeout(timerId);
     };
   }, [state]);
+
+  function mapOutfitItems(items) {
+    return items?.length > 0
+      ? items.map((item) => ({
+          label: item.name,
+          type: item.shape,
+          image: item.image,
+          color: "#e5e5e5",
+        }))
+      : outfitItems;
+  }
+
+  async function handleStylingScroll(event) {
+    const { clientWidth, scrollLeft } = event.currentTarget;
+    const nextIndex = Math.round(scrollLeft / clientWidth);
+    const nextRecommendation = recommendationPages[nextIndex];
+    const clothingId = state?.clothingId ?? state?.id;
+
+    if (nextRecommendation && nextIndex !== activeRecommendationIndex) {
+      setActiveRecommendationIndex(nextIndex);
+      setRecommendation(nextRecommendation);
+      return;
+    }
+
+    if (
+      clothingId &&
+      nextIndex >= recommendationPages.length - 1 &&
+      recommendationPages.length < 6
+    ) {
+      try {
+        const data = await createRecommendationWithItem({
+          clothingId,
+          latitude: weatherLatitude,
+          longitude: weatherLongitude,
+        });
+
+        setRecommendationPages((prevPages) => [...prevPages, data]);
+      } catch (error) {
+        console.log("추가 스타일링 추천 생성 실패:", error.message);
+      }
+    }
+  }
 
   async function wearStylingOutfit() {
     const clothingIds =
@@ -145,28 +190,44 @@ function Styling() {
             </button>
           </div>
 
-          <section className="styling-outfit-grid">
-            {displayOutfitItems.map((item, index) => (
-              <article className="styling-outfit-item" key={`${item.label}-${index}`}>
-                <div className="styling-outfit-image">
-                  {item.image ? (
-                    <img className="styling-outfit-photo" src={item.image} alt="" />
-                  ) : (
-                    <div
-                      className={`styling-clothes-shape styling-clothes-shape--${item.type}`}
-                      style={{ "--item-color": item.color }}
-                    />
-                  )}
+          <section
+            className="styling-carousel"
+            ref={stylingCarouselRef}
+            onScroll={handleStylingScroll}
+          >
+            {(recommendationPages.length > 0
+              ? recommendationPages
+              : [{ id: "fallback", items: [] }]
+            ).map((page, pageIndex) => (
+              <div className="styling-carousel-page" key={page.id ?? pageIndex}>
+                <div className="styling-outfit-grid">
+                  {mapOutfitItems(page.items).map((item, index) => (
+                    <article className="styling-outfit-item" key={`${item.label}-${index}`}>
+                      <div className="styling-outfit-image">
+                        {item.image ? (
+                          <img className="styling-outfit-photo" src={item.image} alt="" />
+                        ) : (
+                          <div
+                            className={`styling-clothes-shape styling-clothes-shape--${item.type}`}
+                            style={{ "--item-color": item.color }}
+                          />
+                        )}
+                      </div>
+                      <p>{item.label}</p>
+                    </article>
+                  ))}
                 </div>
-                <p>{item.label}</p>
-              </article>
+              </div>
             ))}
           </section>
 
           <div className="styling-page-dots" aria-hidden="true">
-            <span className="active" />
-            <span />
-            <span />
+            {(recommendationPages.length > 0 ? recommendationPages : [null]).map((_, index) => (
+              <span
+                className={index === activeRecommendationIndex ? "active" : ""}
+                key={index}
+              />
+            ))}
           </div>
 
           {state?.title && (

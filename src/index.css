@@ -210,6 +210,25 @@ a {
   object-fit: contain;
 }
 
+.styling-carousel {
+  display: flex;
+  margin: 0 -2px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.styling-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.styling-carousel-page {
+  flex: 0 0 100%;
+  min-width: 100%;
+  padding: 0 2px;
+  scroll-snap-align: start;
+}
+
 .styling-outfit-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
