@@ -43,21 +43,15 @@ function Styling() {
       }
 
       try {
-        const pages = [];
+        const data = await createRecommendationWithItem({
+          clothingId,
+          latitude: weatherLatitude,
+          longitude: weatherLongitude,
+        });
 
-        for (let index = 0; index < 3; index += 1) {
-          const data = await createRecommendationWithItem({
-            clothingId,
-            latitude: weatherLatitude,
-            longitude: weatherLongitude,
-          });
-
-          pages.push(data);
-
-          if (isMounted) {
-            setRecommendation(data);
-            setRecommendationPages([...pages]);
-          }
+        if (isMounted) {
+          setRecommendation(data);
+          setRecommendationPages([data]);
         }
       } catch (error) {
         console.log("선택 옷 포함 추천 코디 생성 실패:", error.message);
@@ -91,30 +85,10 @@ function Styling() {
     const { clientWidth, scrollLeft } = event.currentTarget;
     const nextIndex = Math.round(scrollLeft / clientWidth);
     const nextRecommendation = recommendationPages[nextIndex];
-    const clothingId = state?.clothingId ?? state?.id;
 
     if (nextRecommendation && nextIndex !== activeRecommendationIndex) {
       setActiveRecommendationIndex(nextIndex);
       setRecommendation(nextRecommendation);
-      return;
-    }
-
-    if (
-      clothingId &&
-      nextIndex >= recommendationPages.length - 1 &&
-      recommendationPages.length < 6
-    ) {
-      try {
-        const data = await createRecommendationWithItem({
-          clothingId,
-          latitude: weatherLatitude,
-          longitude: weatherLongitude,
-        });
-
-        setRecommendationPages((prevPages) => [...prevPages, data]);
-      } catch (error) {
-        console.log("추가 스타일링 추천 생성 실패:", error.message);
-      }
     }
   }
 
