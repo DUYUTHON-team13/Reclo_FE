@@ -24,7 +24,7 @@ function Report() {
   const [usageReport, setUsageReport] = useState(null);
   const [donatingIds, setDonatingIds] = useState([]);
   const [donatedIds, setDonatedIds] = useState([]);
-  const usageRatePercent = Math.round((usageReport?.usageRate ?? 0.6) * 100);
+  const usageRatePercent = Math.round(usageReport?.usageRate ?? 60);
   const displayUnwornItems =
     reportClothes.length > 0
       ? reportClothes.filter((item) => item.unwornDays >= 30).slice(0, 2)
