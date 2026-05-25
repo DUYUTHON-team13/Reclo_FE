@@ -21,7 +21,7 @@ const recommendedItems = [
 ];
 
 const unwornClothes = [
-  { id: 1, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 1, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
   { id: 2, title: "아디다스 반바지", category: "하의", days: "36일", season: "여름", size: "M" },
 ];
 
@@ -67,7 +67,7 @@ function HomePage() {
       latitude: weatherLatitude,
       longitude: weatherLongitude,
     })
-      .then(async (recommendation) => {
+      .then((recommendation) => {
         setTodayRecommendation(recommendation);
         setRecommendedOutfitItems(recommendation.items);
         setRecommendationPages([recommendation]);
@@ -105,7 +105,13 @@ function HomePage() {
   }, [toastMessage]);
 
   function openClothesInfo(item) {
-    navigate("/clothes-info", { state: { ...item, from: "home" } });
+    navigate("/clothes-info", {
+      state: {
+        ...item,
+        from: "home",
+        backgroundLocation: location,
+      },
+    });
   }
 
   function openStyling(item) {
@@ -184,7 +190,7 @@ function HomePage() {
         clothingIds: recommendedOutfitItems.map((item) => item.clothingId ?? item.id),
         outfitId: todayRecommendation?.id,
       });
-      setToastMessage("오늘 입은 옷 업로드 완료");
+      setToastMessage("오늘 입은 옷 등록 완료");
     } catch (error) {
       console.log("추천 코디 착용 등록 실패:", error.message);
     } finally {
@@ -282,14 +288,16 @@ function HomePage() {
       <section className="question-card">
         <div>
           <h2>오늘은 어떤 옷을 입었나요?</h2>
-          <p>오늘 입은 옷 3초면 등록완료!</p>
+          <p>오늘 입은 옷 3초면 등록 완료!</p>
         </div>
-        <Link to="/today-upload">3초만에 등록하기 <img src={vectorIcon} alt="" /></Link>
+        <Link to="/today-upload">
+          3초만에 등록하기 <img src={vectorIcon} alt="" />
+        </Link>
       </section>
 
       <section className="section-heading">
         <div>
-          <h2>잘 입지 않는 옷들</h2>
+          <h2>오래 입지 않은 옷들</h2>
           <p>옷들이 기다리고 있어요</p>
         </div>
         <Link to="/closet" state={{ sort: "unworn" }}>
@@ -315,12 +323,17 @@ function HomePage() {
       </section>
 
       <Link className="saving-banner" to="/report">
-        일주일 동안 탄소배출량이 {weeklyCarbonSummary?.savedKgCo2 ?? 2.3}kg 감소했어요
-        <span><img src={vectorIcon} alt="" /></span>
+        <p>
+          일주일 동안 탄소배출량이 <strong>{weeklyCarbonSummary?.savedKgCo2 ?? 2.3}kg</strong>{" "}
+          감소했어요
+        </p>
+        <span>
+          <img src={vectorIcon} alt="" />
+        </span>
       </Link>
 
       <Link className="floating-add" to="/add-clothes" aria-label="의류 업로드">
-        <span>＋</span>
+        <span>+</span>
         <p>아이템 업로드</p>
       </Link>
 

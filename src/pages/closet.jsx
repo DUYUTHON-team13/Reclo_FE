@@ -8,12 +8,12 @@ import BottomNav from "../components/bottomNav.jsx";
 import ClothingCard from "../components/clothingCard.jsx";
 
 const fallbackClothes = [
-  { id: 1, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
-  { id: 2, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
-  { id: 3, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
-  { id: 4, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
-  { id: 5, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
-  { id: 6, title: "스투시 반팔티", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 1, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 2, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 3, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 4, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 5, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
+  { id: 6, title: "스투시 반팔 티셔츠", category: "상의", days: "47일", season: "여름", size: "S" },
 ];
 
 function Closet() {
@@ -23,6 +23,7 @@ function Closet() {
   const [filterMode, setFilterMode] = useState("all");
   const [sortMode, setSortMode] = useState("default");
   const [filterLabel, setFilterLabel] = useState("All");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [likedIds, setLikedIds] = useState([]);
   const [apiClothes, setApiClothes] = useState([]);
   const [savedClothes, setSavedClothes] = useState(() =>
@@ -66,10 +67,6 @@ function Closet() {
       [category]: (counts[category] ?? 0) + 1,
     };
   }, {});
-  function handleCategoryFilter(category) {
-    setFilterMode(category);
-    setSortMenuOpen(false);
-  }
 
   const restorableItems = [
     ...deletedItems,
@@ -79,13 +76,34 @@ function Closet() {
         !deletedItems.some((deletedItem) => String(deletedItem.id) === String(item.id))
     ),
   ];
+
   const filteredClothes =
     filterMode === "liked"
       ? closetItems.filter((item) => likedIds.includes(item.id))
       : filterMode === "all"
       ? closetItems
       : closetItems.filter((item) => item.category === filterMode);
-  const visibleClothes = [...filteredClothes].sort((a, b) => {
+
+  const normalizedKeyword = searchKeyword.trim().toLowerCase();
+  const searchedClothes = filteredClothes.filter((item) => {
+    if (!normalizedKeyword) return true;
+
+    const searchableText = [
+      item.title,
+      item.category,
+      item.colorName ?? item.color,
+      item.season,
+      item.seasons?.join(" "),
+      item.brand,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(normalizedKeyword);
+  });
+
+  const visibleClothes = [...searchedClothes].sort((a, b) => {
     if (sortMode === "latest") {
       return getSortTimestamp(b) - getSortTimestamp(a);
     }
@@ -125,8 +143,19 @@ function Closet() {
     );
   }
 
+  function handleCategoryFilter(category) {
+    setFilterMode(category);
+    setSortMenuOpen(false);
+  }
+
   function openClothesInfo(item) {
-    navigate("/clothes-info", { state: { ...item, from: "closet" } });
+    navigate("/clothes-info", {
+      state: {
+        ...item,
+        from: "closet",
+        backgroundLocation: location,
+      },
+    });
   }
 
   function openStyling(item) {
@@ -176,7 +205,7 @@ function Closet() {
     setDeletedIds(nextDeletedIds);
     setDeletedItems(nextDeletedItems);
     setRestoreMenuOpen(nextDeletedItems.length + nextDeletedIds.length > 0);
-    setToastMessage(`${itemToRestore.title}을 다시 불러왔어요`);
+    setToastMessage(`${itemToRestore.title} 다시 불러왔어요`);
   }
 
   return (
@@ -194,7 +223,12 @@ function Closet() {
         <span>
           <img src={searchIcon} alt="" />
         </span>
-        <input type="search" placeholder="옷 검색하기" />
+        <input
+          type="search"
+          placeholder="옷 검색하기"
+          value={searchKeyword}
+          onChange={(event) => setSearchKeyword(event.target.value)}
+        />
       </label>
 
       <section className="filter-row" aria-label="옷 필터">
@@ -222,28 +256,28 @@ function Closet() {
             </div>
           )}
         </div>
-          {/* 카테고리 chips */}
+
+        <button
+          className={`filter-chip${filterMode === "all" && sortMode === "default" ? " active" : ""}`}
+          type="button"
+          onClick={() => {
+            setFilterMode("all");
+            setSortMode("default");
+            setFilterLabel("All");
+          }}
+        >
+          All
+        </button>
+        {categoryList.map((cat) => (
           <button
-            className={`filter-chip${filterMode === "all" && sortMode === "default" ? " active" : ""}`}
+            className={`filter-chip${filterMode === cat.value ? " active" : ""}`}
             type="button"
-            onClick={() => {
-              setFilterMode("all");
-              setSortMode("default");
-              setFilterLabel("All");
-            }}
+            key={cat.value}
+            onClick={() => handleCategoryFilter(cat.value)}
           >
-            All
+            {cat.label} <b>{categoryCounts[cat.value] ?? 0}</b>
           </button>
-          {categoryList.map((cat) => (
-            <button
-              className={`filter-chip${filterMode === cat.value ? " active" : ""}`}
-              type="button"
-              key={cat.value}
-              onClick={() => handleCategoryFilter(cat.value)}
-            >
-              {cat.label} <b>{categoryCounts[cat.value] ?? 0}</b>
-            </button>
-          ))}
+        ))}
       </section>
 
       <section className="clothing-grid closet-grid">
@@ -300,7 +334,7 @@ function Closet() {
       </section>
 
       <Link className="floating-add closet-add" to="/add-clothes" aria-label="의류 업로드">
-        <span>＋</span>
+        <span>+</span>
         <p>아이템 업로드</p>
       </Link>
 

@@ -38,7 +38,7 @@ const todayItems = [
     id: 4,
     title: "줄무늬 가디건",
     category: "상의",
-    color: "검은색",
+    color: "검정색",
     season: "가을",
     days: "13일",
     shape: "cardigan",
@@ -61,8 +61,10 @@ function TodayUpload() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const hasSelectedItems = selectedIds.length > 0;
   const displayItems = clothes.length > 0 ? clothes : todayItems;
+
   const filters = useMemo(() => {
     const countByCategory = displayItems.reduce((counts, item) => {
       if (!item.category) return counts;
@@ -78,6 +80,7 @@ function TodayUpload() {
       ...Object.entries(countByCategory).map(([category, count]) => `${category} ${count}`),
     ];
   }, [displayItems]);
+
   const filteredItems = useMemo(() => {
     const filterName = activeFilter.split(" ").slice(0, -1).join(" ");
     const keyword = searchKeyword.trim().toLowerCase();
@@ -94,6 +97,7 @@ function TodayUpload() {
       return matchesFilter && matchesKeyword;
     });
   }, [activeFilter, displayItems, searchKeyword]);
+
   const selectedItems = displayItems.filter((item) => selectedIds.includes(item.id));
 
   useEffect(() => {
@@ -107,6 +111,7 @@ function TodayUpload() {
   }, []);
 
   function toggleItem(id) {
+    setSubmitError("");
     setSelectedIds((prevIds) =>
       prevIds.includes(id)
         ? prevIds.filter((selectedId) => selectedId !== id)
@@ -118,22 +123,31 @@ function TodayUpload() {
     if (!hasSelectedItems || isSubmittingWearLog) return;
 
     if (!isConfirmStep) {
+      setSubmitError("");
       setIsConfirmStep(true);
       return;
     }
 
     setIsSubmittingWearLog(true);
+    setSubmitError("");
 
     try {
       await createWearLog({ clothingIds: selectedIds });
 
       navigate("/home", {
         state: {
-          toast: "오늘 입은 옷 업로드 완료",
+          toast: "오늘 입은 옷 등록 완료",
         },
       });
     } catch (error) {
       console.log("착용 의류 등록 실패:", error.message);
+
+      if (error.message?.includes("동일 날짜에 이미 착용 기록이 존재합니다")) {
+        navigate("/home");
+        return;
+      }
+
+      setSubmitError(error.message ?? "등록에 실패했어요. 다시 시도해주세요.");
     } finally {
       setIsSubmittingWearLog(false);
     }
@@ -178,8 +192,15 @@ function TodayUpload() {
             ))}
           </section>
 
-          <button className="today-add-more-button" type="button" onClick={() => setIsConfirmStep(false)}>
-            <span>＋</span>
+          <button
+            className="today-add-more-button"
+            type="button"
+            onClick={() => {
+              setSubmitError("");
+              setIsConfirmStep(false);
+            }}
+          >
+            <span>+</span>
             새로운 아이템이에요
           </button>
         </section>
@@ -250,8 +271,7 @@ function TodayUpload() {
                     <div>
                       <h2>{item.title}</h2>
                       <p>
-                        {item.category} &nbsp; {item.colorName ?? item.color} &nbsp;{" "}
-                        {item.season}
+                        {item.category} &nbsp; {item.colorName ?? item.color} &nbsp; {item.season}
                       </p>
                     </div>
                     <button
@@ -269,14 +289,17 @@ function TodayUpload() {
         </>
       )}
 
-      <button
-        className={`today-complete-button ${hasSelectedItems ? "is-active" : ""}`}
-        type="button"
-        disabled={!hasSelectedItems || isSubmittingWearLog}
-        onClick={completeTodayLook}
-      >
-        {isSubmittingWearLog ? "등록 중..." : isConfirmStep ? "등록 완료" : "선택 완료"}
-      </button>
+      <div className="today-complete-area">
+        {submitError && <p className="today-submit-error">{submitError}</p>}
+        <button
+          className={`today-complete-button ${hasSelectedItems ? "is-active" : ""}`}
+          type="button"
+          disabled={!hasSelectedItems || isSubmittingWearLog}
+          onClick={completeTodayLook}
+        >
+          {isSubmittingWearLog ? "등록 중..." : isConfirmStep ? "등록 완료" : "선택 완료"}
+        </button>
+      </div>
     </main>
   );
 }
