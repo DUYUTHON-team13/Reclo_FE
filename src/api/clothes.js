@@ -123,6 +123,23 @@ export async function getNextTodayRecommendation() {
   return mapTodayRecommendation(data);
 }
 
+export async function createRecommendationWithItem({
+  clothingId,
+  latitude = 37.5665,
+  longitude = 126.978,
+} = {}) {
+  const data = await apiFetch("/outfits/recommendations/with-item", {
+    method: "POST",
+    body: JSON.stringify({
+      clothingId,
+      latitude,
+      longitude,
+    }),
+  });
+
+  return mapTodayRecommendation(data);
+}
+
 export async function getClothes(filters = {}) {
   const params = new URLSearchParams();
 

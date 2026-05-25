@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
+import { createRecommendationWithItem } from "../api/clothes";
 
 const outfitItems = [
   { label: "상의", type: "shirt", color: "#cbe6fb" },
@@ -9,18 +10,66 @@ const outfitItems = [
   { label: "신발", type: "shoes", color: "#111111" },
 ];
 
+const weatherLatitude = import.meta.env.VITE_WEATHER_LATITUDE ?? 37.5665;
+const weatherLongitude = import.meta.env.VITE_WEATHER_LONGITUDE ?? 126.978;
+
 function Styling() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [isComplete, setIsComplete] = useState(false);
+  const [recommendation, setRecommendation] = useState(null);
+  const displayOutfitItems =
+    recommendation?.items?.length > 0
+      ? recommendation.items.map((item) => ({
+          label: item.name,
+          type: item.shape,
+          image: item.image,
+          color: "#e5e5e5",
+        }))
+      : outfitItems;
 
   useEffect(() => {
-    const timerId = window.setTimeout(() => {
-      setIsComplete(true);
-    }, 1200);
+    let isMounted = true;
+    let timerId;
+    const clothingId = state?.clothingId ?? state?.id;
 
-    return () => window.clearTimeout(timerId);
-  }, []);
+    setIsComplete(false);
+    setRecommendation(null);
+
+    async function loadRecommendation() {
+      if (!clothingId) {
+        timerId = window.setTimeout(() => {
+          if (isMounted) setIsComplete(true);
+        }, 1200);
+        return;
+      }
+
+      try {
+        const data = await createRecommendationWithItem({
+          clothingId,
+          latitude: weatherLatitude,
+          longitude: weatherLongitude,
+        });
+
+        if (isMounted) {
+          setRecommendation(data);
+        }
+      } catch (error) {
+        console.log("선택 옷 포함 추천 코디 생성 실패:", error.message);
+      } finally {
+        if (isMounted) {
+          setIsComplete(true);
+        }
+      }
+    }
+
+    loadRecommendation();
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(timerId);
+    };
+  }, [state]);
 
   return (
     <main className="mobile-page styling-page">
@@ -61,20 +110,24 @@ function Styling() {
           </h1>
 
           <div className="styling-result-title">
-            <strong>스타일링 1</strong>
+            <strong>스타일링 {recommendation?.recommendationOrder ?? 1}</strong>
             <button type="button" aria-label="스타일링 좋아요">
               <img src={heartIcon} alt="" />
             </button>
           </div>
 
           <section className="styling-outfit-grid">
-            {outfitItems.map((item) => (
-              <article className="styling-outfit-item" key={item.label}>
+            {displayOutfitItems.map((item, index) => (
+              <article className="styling-outfit-item" key={`${item.label}-${index}`}>
                 <div className="styling-outfit-image">
-                  <div
-                    className={`styling-clothes-shape styling-clothes-shape--${item.type}`}
-                    style={{ "--item-color": item.color }}
-                  />
+                  {item.image ? (
+                    <img className="styling-outfit-photo" src={item.image} alt="" />
+                  ) : (
+                    <div
+                      className={`styling-clothes-shape styling-clothes-shape--${item.type}`}
+                      style={{ "--item-color": item.color }}
+                    />
+                  )}
                 </div>
                 <p>{item.label}</p>
               </article>
@@ -89,6 +142,10 @@ function Styling() {
 
           {state?.title && (
             <p className="styling-source">선택한 옷: {state.title}</p>
+          )}
+
+          {recommendation?.reason && (
+            <p className="styling-source">{recommendation.reason}</p>
           )}
 
           <div className="styling-actions">

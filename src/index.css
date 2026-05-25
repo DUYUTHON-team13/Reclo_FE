@@ -229,11 +229,21 @@ a {
   overflow: hidden;
 }
 
+.styling-outfit-photo {
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  display: block;
+  object-fit: contain;
+}
+
 .styling-outfit-item p {
   margin: 8px 0 0;
   color: #555555;
   font-size: 12px;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .styling-clothes-shape {
