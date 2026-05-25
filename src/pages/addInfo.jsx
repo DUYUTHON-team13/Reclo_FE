@@ -144,7 +144,7 @@ function AddInfo() {
         aria-label="뒤로가기"
         onClick={() => navigate("/add-clothes/next", { state: { previewImage } })}
       >
-        ←
+        <img src="src\assets\image\icon\돌아가기.png" alt="" />
       </button>
 
       <h1 className="add-clothes-title">
@@ -189,7 +189,7 @@ function AddInfo() {
             <input
               name="purchaseDate"
               value={form.purchaseDate}
-              placeholder="구매 시기를 입력하세요 (ex. 24년 구매)"
+              placeholder="구매 시기를 입력하세요 (ex. 2026-05-25)"
               onChange={handleChange}
             />
             <img src={closeIcon} alt="" />
