@@ -21,14 +21,38 @@ function Closet() {
   const location = useLocation();
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [filterMode, setFilterMode] = useState("all");
+  const [sortMode, setSortMode] = useState("default");
   const [filterLabel, setFilterLabel] = useState("All");
   const [likedIds, setLikedIds] = useState([]);
   const [apiClothes, setApiClothes] = useState([]);
-  const [savedClothes, setSavedClothes] = useState([]);
-  const [deletedIds, setDeletedIds] = useState([]);
-  const [deletedItems, setDeletedItems] = useState([]);
+  const [savedClothes, setSavedClothes] = useState(() =>
+    JSON.parse(localStorage.getItem("closetItems") ?? "[]")
+  );
+  const [deletedIds, setDeletedIds] = useState(() =>
+    JSON.parse(localStorage.getItem("deletedClosetItemIds") ?? "[]")
+  );
+  const [deletedItems, setDeletedItems] = useState(() =>
+    JSON.parse(localStorage.getItem("deletedClosetItems") ?? "[]")
+  );
   const [restoreMenuOpen, setRestoreMenuOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(location.state?.toast ?? "");
+
+  const categoryList = [
+    { label: "상의", value: "상의" },
+    { label: "하의", value: "하의" },
+    { label: "신발", value: "신발" },
+    { label: "아우터", value: "아우터" },
+  ];
+
+  function getSortTimestamp(item) {
+    const rawValue = item.lastWornAt ?? item.purchaseDate ?? item.purchasedAt ?? "";
+
+    if (!rawValue) return 0;
+
+    const parsed = Date.parse(rawValue);
+
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
 
   const serverClothes = apiClothes.length > 0 ? apiClothes : fallbackClothes;
   const closetItems = [...savedClothes, ...serverClothes].filter(
@@ -42,12 +66,11 @@ function Closet() {
       [category]: (counts[category] ?? 0) + 1,
     };
   }, {});
-  const filters = [
-    `상의 ${categoryCounts["상의"] ?? 0}`,
-    `하의 ${categoryCounts["하의"] ?? 0}`,
-    `신발 ${categoryCounts["신발"] ?? 0}`,
-    `아우터 ${categoryCounts["아우터"] ?? 0}`,
-  ];
+  function handleCategoryFilter(category) {
+    setFilterMode(category);
+    setSortMenuOpen(false);
+  }
+
   const restorableItems = [
     ...deletedItems,
     ...fallbackClothes.filter(
@@ -59,23 +82,22 @@ function Closet() {
   const filteredClothes =
     filterMode === "liked"
       ? closetItems.filter((item) => likedIds.includes(item.id))
-      : closetItems;
-  const visibleClothes =
-    location.state?.sort === "unworn"
-      ? [...filteredClothes].sort((a, b) => (b.unwornDays ?? 0) - (a.unwornDays ?? 0))
-      : filteredClothes;
+      : filterMode === "all"
+      ? closetItems
+      : closetItems.filter((item) => item.category === filterMode);
+  const visibleClothes = [...filteredClothes].sort((a, b) => {
+    if (sortMode === "latest") {
+      return getSortTimestamp(b) - getSortTimestamp(a);
+    }
+
+    if (location.state?.sort === "unworn") {
+      return (b.unwornDays ?? 0) - (a.unwornDays ?? 0);
+    }
+
+    return 0;
+  });
 
   useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem("closetItems") ?? "[]");
-    const storedDeletedIds = JSON.parse(
-      localStorage.getItem("deletedClosetItemIds") ?? "[]"
-    );
-    const storedDeletedItems = JSON.parse(localStorage.getItem("deletedClosetItems") ?? "[]");
-
-    setSavedClothes(storedItems);
-    setDeletedIds(storedDeletedIds);
-    setDeletedItems(storedDeletedItems);
-
     getClothes()
       .then((items) => {
         setApiClothes(items);
@@ -112,8 +134,20 @@ function Closet() {
   }
 
   function selectFilter(mode, label) {
-    setFilterMode(mode);
-    setFilterLabel(label);
+    if (mode === "latest") {
+      setFilterMode("all");
+      setSortMode("latest");
+      setFilterLabel("최신순");
+    } else if (mode === "liked") {
+      setFilterMode("liked");
+      setSortMode("default");
+      setFilterLabel("좋아요만");
+    } else {
+      setFilterMode("all");
+      setSortMode("default");
+      setFilterLabel(label);
+    }
+
     setSortMenuOpen(false);
   }
 
@@ -188,12 +222,28 @@ function Closet() {
             </div>
           )}
         </div>
-
-        {filters.map((filter) => (
-          <button className="filter-chip" type="button" key={filter}>
-            {filter}
+          {/* 카테고리 chips */}
+          <button
+            className={`filter-chip${filterMode === "all" && sortMode === "default" ? " active" : ""}`}
+            type="button"
+            onClick={() => {
+              setFilterMode("all");
+              setSortMode("default");
+              setFilterLabel("All");
+            }}
+          >
+            All
           </button>
-        ))}
+          {categoryList.map((cat) => (
+            <button
+              className={`filter-chip${filterMode === cat.value ? " active" : ""}`}
+              type="button"
+              key={cat.value}
+              onClick={() => handleCategoryFilter(cat.value)}
+            >
+              {cat.label} <b>{categoryCounts[cat.value] ?? 0}</b>
+            </button>
+          ))}
       </section>
 
       <section className="clothing-grid closet-grid">

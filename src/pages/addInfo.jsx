@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import closeIcon from "../assets/image/icon/곱표.png";
+import backIcon from "../assets/image/icon/돌아가기.png";
 import { createClothing } from "../api/clothes";
 
 const categoryMap = {
@@ -144,7 +145,7 @@ function AddInfo() {
         aria-label="뒤로가기"
         onClick={() => navigate("/add-clothes/next", { state: { previewImage } })}
       >
-        ←
+        <img src={backIcon} alt="" />
       </button>
 
       <h1 className="add-clothes-title">
@@ -189,7 +190,7 @@ function AddInfo() {
             <input
               name="purchaseDate"
               value={form.purchaseDate}
-              placeholder="구매 시기를 입력하세요 (ex. 24년 구매)"
+              placeholder="구매 시기를 입력하세요 (ex. 2026-05-25)"
               onChange={handleChange}
             />
             <img src={closeIcon} alt="" />
@@ -223,22 +224,24 @@ function AddInfo() {
         </label>
       </form>
 
-      <div className="add-info-actions">
-        <button
-          className="ghost-button add-info-other"
-          type="button"
-          onClick={() => navigate("/add-clothes")}
-        >
-          다른 제품 등록하기
-        </button>
-        <button
-          className={`primary-button add-info-next ${isComplete ? "is-complete" : ""}`}
-          type="button"
-          disabled={!isComplete || isSubmitting}
-          onClick={completeRegister}
-        >
-          {isSubmitting ? "등록 중" : isComplete ? "완료" : "다음"}
-        </button>
+      <div className="add-info-actions-bg">
+        <div className="add-info-actions">
+          <button
+            className="ghost-button add-info-other"
+            type="button"
+            onClick={() => navigate("/add-clothes")}
+          >
+            다른 제품 등록하기
+          </button>
+          <button
+            className={`primary-button add-info-next ${isComplete ? "is-complete" : ""}`}
+            type="button"
+            disabled={!isComplete || isSubmitting}
+            onClick={completeRegister}
+          >
+            {isSubmitting ? "등록 중" : isComplete ? "완료" : "다음"}
+          </button>
+        </div>
       </div>
 
       <div className="home-indicator add-home-indicator" />

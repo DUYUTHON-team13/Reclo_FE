@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import cameraIcon from "../assets/image/icon/Camera.png";
 import closeIcon from "../assets/image/icon/곱표.png";
+import backIcon from "../assets/image/icon/돌아가기.png";
 
 function AddClothes() {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ function AddClothes() {
         aria-label="뒤로가기"
         onClick={() => navigate("/closet")}
       >
-        ←
+        <img src={backIcon} alt="뒤로가기" />
       </button>
 
       <h1 className="add-clothes-title">

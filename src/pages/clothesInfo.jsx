@@ -6,6 +6,20 @@ import { getClothing } from "../api/clothes";
 const CLOSE_DISTANCE = 170;
 const EDIT_DISTANCE = 80;
 const previewCards = [1, 2, 3, 4];
+const colorLabelMap = {
+  BLACK: "검정",
+  WHITE: "흰색",
+  GRAY: "회색",
+  BLUE: "파랑",
+  NAVY: "남색",
+  BROWN: "갈색",
+  BEIGE: "베이지",
+  RED: "빨강",
+  PINK: "분홍",
+  YELLOW: "노랑",
+  GREEN: "초록",
+  PURPLE: "보라",
+};
 
 function ClothesInfo() {
   const navigate = useNavigate();
@@ -39,9 +53,12 @@ function ClothesInfo() {
   }, [state]);
 
   const selectedSeasons = item.seasons ?? [item.season ?? "여름"];
+  const normalizedColor = item.color
+    ? colorLabelMap[item.color.toUpperCase()] ?? item.color
+    : "흰색";
   const tags = [
     item.category,
-    item.color ?? "흰색",
+    normalizedColor,
     ...selectedSeasons,
     item.size ?? "S",
     item.purchaseDate ?? "24년 여름 구매",
