@@ -373,8 +373,14 @@ a {
 
 .home-header h1 {
   margin: 0;
-  font-size: 13px;
-  font-weight: 900;
+  color: var(--Foundation-Grey-Darker, #1B1B1B);
+
+/* Title_Semibold */
+font-family: Pretendard;
+font-size: 20px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
 }
 
 .ai-card {
@@ -395,17 +401,30 @@ a {
 .question-card h2,
 .section-heading h2 {
   margin: 0;
-  font-size: 12px;
-  font-weight: 900;
+    color: var(--Foundation-Grey-Darker, #1B1B1B);
+font-feature-settings: 'liga' off, 'clig' off;
+/* Body_Semibold */
+font-family: "Pretendard Variable";
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 150%; /* 24px */
+letter-spacing: -0.352px;
 }
 
 .ai-card p,
 .question-card p,
 .section-heading p {
   margin: 5px 0 0;
-  color: #8a8a8a;
-  font-size: 10px;
-  font-weight: 700;
+  color: var(--Foundation-Grey-Normal, #4D4D4D);
+font-feature-settings: 'liga' off, 'clig' off;
+
+/* body_Regular */
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 150%; /* 21px */
 }
 
 .like-button {

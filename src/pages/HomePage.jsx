@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import toastIcon from "../assets/image/icon/Frame 2147227879.png";
+import vectorIcon from "../assets/image/icon/Vector 1.png";
 import {
   getClothes,
   getCurrentTodayRecommendation,
@@ -272,7 +273,7 @@ function HomePage() {
           <h2>오늘은 어떤 옷을 입었나요?</h2>
           <p>오늘 입은 옷 3초면 등록완료!</p>
         </div>
-        <Link to="/today-upload">3초만에 등록하기 &gt;</Link>
+        <Link to="/today-upload">3초만에 등록하기 <img src={vectorIcon} alt="" /></Link>
       </section>
 
       <section className="section-heading">
@@ -304,7 +305,7 @@ function HomePage() {
 
       <Link className="saving-banner" to="/report">
         일주일 동안 탄소배출량이 {weeklyCarbonSummary?.savedKgCo2 ?? 2.3}kg 감소했어요
-        <span>&gt;</span>
+        <span><img src={vectorIcon} alt="" /></span>
       </Link>
 
       <Link className="floating-add" to="/add-clothes" aria-label="의류 업로드">
