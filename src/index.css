@@ -417,24 +417,33 @@ a {
   font-weight: 900;
 }
 
-.outfit-row {
+.outfit-carousel {
   display: flex;
-  gap: 14px;
-  margin: 0 -4px;
-  padding: 0 4px 4px;
+  margin: 0 -2px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
 
-.outfit-row::-webkit-scrollbar {
+.outfit-carousel::-webkit-scrollbar {
   display: none;
 }
 
-.outfit-item {
-  flex: 0 0 96px;
-  min-width: 96px;
+.outfit-page {
+  flex: 0 0 100%;
+  min-width: 100%;
+  padding: 0 2px;
   scroll-snap-align: start;
+}
+
+.outfit-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.outfit-item {
+  min-width: 0;
   text-align: center;
 }
 

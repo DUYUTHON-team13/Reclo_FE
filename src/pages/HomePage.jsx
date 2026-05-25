@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import toastIcon from "../assets/image/icon/Frame 2147227879.png";
@@ -30,10 +30,13 @@ const weatherLongitude = import.meta.env.VITE_WEATHER_LONGITUDE ?? 126.978;
 function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const recommendationCarouselRef = useRef(null);
   const [likedOutfit, setLikedOutfit] = useState(false);
   const [temperature, setTemperature] = useState(null);
   const [homeClothes, setHomeClothes] = useState([]);
   const [todayRecommendation, setTodayRecommendation] = useState(null);
+  const [recommendationPages, setRecommendationPages] = useState([]);
+  const [activeRecommendationIndex, setActiveRecommendationIndex] = useState(0);
   const [recommendedOutfitItems, setRecommendedOutfitItems] = useState([]);
   const [isLoadingNextRecommendation, setIsLoadingNextRecommendation] = useState(false);
   const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
@@ -62,9 +65,19 @@ function HomePage() {
       latitude: weatherLatitude,
       longitude: weatherLongitude,
     })
-      .then((recommendation) => {
+      .then(async (recommendation) => {
         setTodayRecommendation(recommendation);
         setRecommendedOutfitItems(recommendation.items);
+        setRecommendationPages([recommendation]);
+        setActiveRecommendationIndex(0);
+
+        const nextPages = [recommendation];
+
+        for (let index = 0; index < 2; index += 1) {
+          const nextRecommendation = await getNextTodayRecommendation();
+          nextPages.push(nextRecommendation);
+          setRecommendationPages([...nextPages]);
+        }
       })
       .catch((error) => {
         console.log("AI recommendation load failed:", error.message);
@@ -111,15 +124,42 @@ function HomePage() {
     setIsLoadingNextRecommendation(true);
 
     try {
-      const recommendation = await getNextTodayRecommendation();
+      const nextPageIndex = activeRecommendationIndex + 1;
+      const recommendation =
+        recommendationPages[nextPageIndex] ?? (await getNextTodayRecommendation());
+      const nextPages = recommendationPages[nextPageIndex]
+        ? recommendationPages
+        : [...recommendationPages, recommendation];
+
       setTodayRecommendation(recommendation);
       setRecommendedOutfitItems(recommendation.items);
+      setRecommendationPages(nextPages);
+      setActiveRecommendationIndex(nextPageIndex);
       setLikedOutfit(false);
+      window.requestAnimationFrame(() => {
+        recommendationCarouselRef.current?.scrollTo({
+          left: recommendationCarouselRef.current.clientWidth * nextPageIndex,
+          behavior: "smooth",
+        });
+      });
     } catch (error) {
       console.log("다음 추천 코디 불러오기 실패:", error.message);
     } finally {
       setIsLoadingNextRecommendation(false);
     }
+  }
+
+  function handleRecommendationScroll(event) {
+    const { clientWidth, scrollLeft } = event.currentTarget;
+    const nextIndex = Math.round(scrollLeft / clientWidth);
+    const recommendation = recommendationPages[nextIndex];
+
+    if (!recommendation || nextIndex === activeRecommendationIndex) return;
+
+    setActiveRecommendationIndex(nextIndex);
+    setTodayRecommendation(recommendation);
+    setRecommendedOutfitItems(recommendation.items);
+    setLikedOutfit(false);
   }
 
   async function wearRecommendedOutfit() {
@@ -170,28 +210,41 @@ function HomePage() {
           </span>
         </div>
 
-        <div className="outfit-row">
-          {displayRecommendedItems.map((item) => (
-            <article className="outfit-item" key={item.name}>
-              <div
-                className={`outfit-visual outfit-visual--${item.shape} ${
-                  item.image ? "has-image" : ""
-                }`}
-                style={{
-                  background: item.image
-                    ? `url(${item.image}) center / cover no-repeat`
-                    : item.color,
-                }}
-              />
-              <p>{item.name}</p>
-            </article>
+        <div
+          className="outfit-carousel"
+          ref={recommendationCarouselRef}
+          onScroll={handleRecommendationScroll}
+        >
+          {(recommendationPages.length > 0
+            ? recommendationPages
+            : [{ id: "fallback", items: displayRecommendedItems }]
+          ).map((recommendation, recommendationIndex) => (
+            <div className="outfit-page" key={recommendation.id ?? recommendationIndex}>
+              <div className="outfit-row">
+                {recommendation.items.map((item) => (
+                  <article className="outfit-item" key={`${recommendationIndex}-${item.name}`}>
+                    <div
+                      className={`outfit-visual outfit-visual--${item.shape} ${
+                        item.image ? "has-image" : ""
+                      }`}
+                      style={{
+                        background: item.image
+                          ? `url(${item.image}) center / cover no-repeat`
+                          : item.color,
+                      }}
+                    />
+                    <p>{item.name}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
         <div className="dot-row" aria-hidden="true">
-          <span className="active" />
-          <span />
-          <span />
+          {(recommendationPages.length > 0 ? recommendationPages : [null]).map((_, index) => (
+            <span className={index === activeRecommendationIndex ? "active" : ""} key={index} />
+          ))}
         </div>
 
         <div className="ai-card__actions">
