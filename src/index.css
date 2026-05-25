@@ -1277,14 +1277,14 @@ a {
   height: 112px;
   display: grid;
   place-items: center;
-  background: #eeeeee;
+  background: #f4f4f4;
 }
 
 .today-clothing-card__photo,
 .today-selected-card__photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  object-fit: contain;
 }
 
 .today-clothing-card__image span {
@@ -1307,11 +1307,18 @@ a {
   padding: 9px 8px 10px;
 }
 
+.today-clothing-card__body > div {
+  min-width: 0;
+}
+
 .today-clothing-card__body h2 {
   margin: 0;
   color: #202020;
   font-size: 11px;
   font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .today-clothing-card__body p {
@@ -1319,6 +1326,9 @@ a {
   color: #a3a3a3;
   font-size: 9px;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .today-clothing-card__body button {
@@ -1341,6 +1351,46 @@ a {
   position: relative;
   width: 58px;
   height: 78px;
+}
+
+.today-clothes-shape--shirt {
+  width: 69px;
+  height: 62px;
+  border-radius: 10px 10px 4px 4px;
+  background: #cbe6fb;
+  clip-path: polygon(18% 0, 36% 0, 50% 12%, 64% 0, 82% 0, 100% 28%, 82% 42%, 82% 100%, 18% 100%, 18% 42%, 0 28%);
+}
+
+.today-clothes-shape--pants {
+  width: 54px;
+  height: 76px;
+  border-radius: 5px 5px 13px 13px;
+  background: #73612e;
+  clip-path: polygon(18% 0, 82% 0, 76% 100%, 55% 100%, 50% 32%, 45% 100%, 24% 100%);
+}
+
+.today-clothes-shape--outer {
+  width: 70px;
+  height: 72px;
+  border-radius: 20px 20px 5px 5px;
+  background: #6b5363;
+}
+
+.today-clothes-shape--outer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.today-clothes-shape--shoes {
+  width: 74px;
+  height: 30px;
+  border-radius: 18px 26px 10px 10px;
+  background: #d9d9d9;
 }
 
 .today-clothes-shape--dress {

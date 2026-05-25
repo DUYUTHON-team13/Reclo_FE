@@ -52,6 +52,7 @@ function mapClothingItem(item) {
     image: item.imageUrl,
     category: toLabel(item.category, categoryLabelMap),
     apiCategory: item.category,
+    shape: toOutfitShape(item.category),
     color: item.color,
     colorName: toLabel(item.color, colorLabelMap),
     style: item.style,
