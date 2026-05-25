@@ -29,6 +29,7 @@ const weatherLatitude = import.meta.env.VITE_WEATHER_LATITUDE ?? 37.5665;
 const weatherLongitude = import.meta.env.VITE_WEATHER_LONGITUDE ?? 126.978;
 
 function HomePage() {
+  const maxRecommendations = 5;
   const navigate = useNavigate();
   const location = useLocation();
   const recommendationCarouselRef = useRef(null);
@@ -71,14 +72,6 @@ function HomePage() {
         setRecommendedOutfitItems(recommendation.items);
         setRecommendationPages([recommendation]);
         setActiveRecommendationIndex(0);
-
-        const nextPages = [recommendation];
-
-        for (let index = 0; index < 2; index += 1) {
-          const nextRecommendation = await getNextTodayRecommendation();
-          nextPages.push(nextRecommendation);
-          setRecommendationPages([...nextPages]);
-        }
       })
       .catch((error) => {
         console.log("AI recommendation load failed:", error.message);
@@ -122,15 +115,33 @@ function HomePage() {
   async function showNextRecommendation() {
     if (isLoadingNextRecommendation) return;
 
+    if (activeRecommendationIndex >= maxRecommendations - 1) {
+      const firstPage = recommendationPages[0] ?? todayRecommendation;
+
+      if (!firstPage) return;
+
+      setActiveRecommendationIndex(0);
+      setTodayRecommendation(firstPage);
+      setRecommendedOutfitItems(firstPage.items);
+      setLikedOutfit(false);
+      window.requestAnimationFrame(() => {
+        recommendationCarouselRef.current?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      });
+      return;
+    }
+
     setIsLoadingNextRecommendation(true);
 
     try {
       const nextPageIndex = activeRecommendationIndex + 1;
-      const recommendation =
-        recommendationPages[nextPageIndex] ?? (await getNextTodayRecommendation());
-      const nextPages = recommendationPages[nextPageIndex]
+      const existingRecommendation = recommendationPages[nextPageIndex];
+      const recommendation = existingRecommendation ?? (await getNextTodayRecommendation());
+      const nextPages = existingRecommendation
         ? recommendationPages
-        : [...recommendationPages, recommendation];
+        : [...recommendationPages, recommendation].slice(0, maxRecommendations);
 
       setTodayRecommendation(recommendation);
       setRecommendedOutfitItems(recommendation.items);
