@@ -7,3 +7,7 @@ export async function getCarbonSavingsReport() {
 export async function getWeeklyCarbonSavingsSummary() {
   return apiFetch("/api/reports/carbon-savings/weekly-summary");
 }
+
+export async function getUsageReport() {
+  return apiFetch("/api/reports/usage");
+}

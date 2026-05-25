@@ -6,7 +6,7 @@ import infoIcon from "../assets/image/icon/Info.png";
 import leafIcon from "../assets/image/icon/Leaf.png";
 import { getClothes } from "../api/clothes";
 import { createDonation } from "../api/donations";
-import { getCarbonSavingsReport } from "../api/reports";
+import { getCarbonSavingsReport, getUsageReport } from "../api/reports";
 import BottomNav from "../components/bottomNav.jsx";
 
 const unwornItems = [
@@ -21,8 +21,10 @@ function Report() {
   const [isUnwornGuideOpen, setIsUnwornGuideOpen] = useState(false);
   const [reportClothes, setReportClothes] = useState([]);
   const [carbonSavings, setCarbonSavings] = useState(null);
+  const [usageReport, setUsageReport] = useState(null);
   const [donatingIds, setDonatingIds] = useState([]);
   const [donatedIds, setDonatedIds] = useState([]);
+  const usageRatePercent = Math.round((usageReport?.usageRate ?? 0.6) * 100);
   const displayUnwornItems =
     reportClothes.length > 0
       ? reportClothes.filter((item) => item.unwornDays >= 30).slice(0, 2)
@@ -43,6 +45,14 @@ function Report() {
       })
       .catch((error) => {
         console.log("탄소 절감 리포트 불러오기 실패:", error.message);
+      });
+
+    getUsageReport()
+      .then((data) => {
+        setUsageReport(data);
+      })
+      .catch((error) => {
+        console.log("의류 활용 리포트 불러오기 실패:", error.message);
       });
   }, []);
 
@@ -93,7 +103,7 @@ function Report() {
           onClick={() => setIsUsageGuideOpen(true)}
         >
           <div>
-            <strong>60%</strong>
+            <strong>{usageRatePercent}%</strong>
             <span>활용도</span>
           </div>
         </button>
@@ -122,7 +132,8 @@ function Report() {
               계산 방식: 30일 동안 활용한 의류 수 ÷ 옷장 전체 의류 수 × 100
             </p>
             <p>
-              예를 들어 옷장 전체 의류가 48벌이고, 30일 동안 29벌을 활용했다면 약 60%로 표시돼요.
+              현재 옷장 전체 의류 {usageReport?.totalItems ?? 48}벌 중 최근 30일 내 착용한
+              의류는 {usageReport?.wornWithin30Days ?? 29}벌이에요.
             </p>
           </article>
         </section>
@@ -141,7 +152,7 @@ function Report() {
               <img src={dragIcon} alt="" />
             </button>
           </div>
-          <strong>48</strong>
+          <strong>{usageReport?.totalItems ?? 48}</strong>
         </article>
         <article className="report-stat-card">
           <div className="report-stat-card__top">
@@ -155,7 +166,7 @@ function Report() {
               <img src={infoIcon} alt="" />
             </button>
           </div>
-          <strong>12</strong>
+          <strong>{usageReport?.unwornItems ?? 12}</strong>
         </article>
       </section>
 
