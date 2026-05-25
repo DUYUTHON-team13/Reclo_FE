@@ -1300,35 +1300,40 @@ a {
 .today-upload-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 12px 10px;
   padding-bottom: 88px;
 }
 
 .today-clothing-card {
   overflow: hidden;
-  border: 1.5px solid transparent;
-  border-radius: 7px;
+  border: 1px solid #eeeeee;
+  border-radius: 8px;
   background: #ffffff;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .today-clothing-card.is-selected {
   border-color: var(--foundation-blue-normal);
+  box-shadow: 0 0 0 1px var(--foundation-blue-normal);
 }
 
 .today-clothing-card__image {
   position: relative;
-  height: 112px;
+  height: 118px;
   display: grid;
   place-items: center;
-  background: #f4f4f4;
+  overflow: hidden;
+  background: #f3f3f3;
 }
 
 .today-clothing-card__photo,
 .today-selected-card__photo {
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
+  width: 100%;
+  height: 100%;
+  display: block;
   object-fit: contain;
+  padding: 10px;
 }
 
 .today-clothing-card__image span {
@@ -1347,8 +1352,9 @@ a {
   display: flex;
   align-items: start;
   justify-content: space-between;
-  gap: 6px;
-  padding: 9px 8px 10px;
+  gap: 8px;
+  min-height: 58px;
+  padding: 9px 9px 10px;
 }
 
 .today-clothing-card__body > div {
@@ -1358,7 +1364,7 @@ a {
 .today-clothing-card__body h2 {
   margin: 0;
   color: #202020;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1366,9 +1372,9 @@ a {
 }
 
 .today-clothing-card__body p {
-  margin: 7px 0 0;
+  margin: 6px 0 0;
   color: #a3a3a3;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1376,8 +1382,9 @@ a {
 }
 
 .today-clothing-card__body button {
-  width: 22px;
-  height: 22px;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   padding: 0;

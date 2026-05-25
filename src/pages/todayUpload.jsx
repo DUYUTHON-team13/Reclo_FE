@@ -44,6 +44,14 @@ const todayItems = [
   },
 ];
 
+function getItemShape(item) {
+  if (item.shape) return item.shape;
+  if (item.apiCategory === "BOTTOM" || item.category === "하의") return "pants";
+  if (item.apiCategory === "OUTER" || item.category === "아우터") return "outer";
+  if (item.apiCategory === "SHOES" || item.category === "신발") return "shoes";
+  return "shirt";
+}
+
 function TodayUpload() {
   const navigate = useNavigate();
   const [clothes, setClothes] = useState([]);
@@ -163,7 +171,7 @@ function TodayUpload() {
                 {item.image ? (
                   <img className="today-selected-card__photo" src={item.image} alt="" />
                 ) : (
-                  <div className={`today-clothes-shape today-clothes-shape--${item.shape}`} />
+                  <div className={`today-clothes-shape today-clothes-shape--${getItemShape(item)}`} />
                 )}
               </article>
             ))}
@@ -232,7 +240,7 @@ function TodayUpload() {
                     {item.image ? (
                       <img className="today-clothing-card__photo" src={item.image} alt="" />
                     ) : (
-                      <div className={`today-clothes-shape today-clothes-shape--${item.shape}`} />
+                      <div className={`today-clothes-shape today-clothes-shape--${getItemShape(item)}`} />
                     )}
                     <span>{item.days}</span>
                   </div>
