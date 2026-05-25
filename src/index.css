@@ -273,7 +273,19 @@ a {
 }
 
 .styling-clothes-shape--shirt {
-  clip-path: polygon(20% 0, 38% 0, 50% 15%, 62% 0, 80% 0, 100% 23%, 82% 39%, 82% 100%, 18% 100%, 18% 39%, 0 23%);
+  clip-path: polygon(
+    20% 0,
+    38% 0,
+    50% 15%,
+    62% 0,
+    80% 0,
+    100% 23%,
+    82% 39%,
+    82% 100%,
+    18% 100%,
+    18% 39%,
+    0 23%
+  );
 }
 
 .styling-clothes-shape--outer {
@@ -295,8 +307,12 @@ a {
 .styling-clothes-shape--pants {
   width: 58px;
   height: 90px;
-  background:
-    linear-gradient(90deg, var(--item-color) 0 45%, transparent 45% 55%, var(--item-color) 55% 100%);
+  background: linear-gradient(
+    90deg,
+    var(--item-color) 0 45%,
+    transparent 45% 55%,
+    var(--item-color) 55% 100%
+  );
 }
 
 .styling-clothes-shape--shoes {
@@ -373,14 +389,14 @@ a {
 
 .home-header h1 {
   margin: 0;
-  color: var(--Foundation-Grey-Darker, #1B1B1B);
+  color: var(--Foundation-Grey-Darker, #1b1b1b);
 
-/* Title_Semibold */
-font-family: Pretendard;
-font-size: 20px;
-font-style: normal;
-font-weight: 600;
-line-height: normal;
+  /* Title_Semibold */
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
 .ai-card {
@@ -397,34 +413,65 @@ line-height: normal;
   margin-bottom: 14px;
 }
 
+.question-card h2 {
+  margin: 0;
+  color: var(--Foundation-White-Light, #fff);
+  text-align: center;
+  font-feature-settings:
+    "liga" off,
+    "clig" off;
+  /* body_Semibold */
+  font-family: "Pretendard Variable";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 21px */
+  letter-spacing: -0.308px;
+}
+
 .ai-card h2,
-.question-card h2,
 .section-heading h2 {
   margin: 0;
-    color: var(--Foundation-Grey-Darker, #1B1B1B);
+  color: var(--Foundation-Grey-Darker, #1b1b1b);
+  font-feature-settings:
+    "liga" off,
+    "clig" off;
+  /* Body_Semibold */
+  font-family: "Pretendard Variable";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 24px */
+  letter-spacing: -0.352px;
+}
+
+.question-card p{
+  margin: 5px 0 0;
+  color: var(--foundation-white-normal-hover, #E1E1E1);
 font-feature-settings: 'liga' off, 'clig' off;
-/* Body_Semibold */
-font-family: "Pretendard Variable";
-font-size: 16px;
+
+/* Caption_Medium */
+font-family: Pretendard;
+font-size: 12px;
 font-style: normal;
-font-weight: 600;
-line-height: 150%; /* 24px */
-letter-spacing: -0.352px;
+font-weight: 500;
+line-height: 103%; /* 12.36px */
 }
 
 .ai-card p,
-.question-card p,
 .section-heading p {
   margin: 5px 0 0;
-  color: var(--Foundation-Grey-Normal, #4D4D4D);
-font-feature-settings: 'liga' off, 'clig' off;
+  color: var(--Foundation-Grey-Normal, #4d4d4d);
+  font-feature-settings:
+    "liga" off,
+    "clig" off;
 
-/* body_Regular */
-font-family: Pretendard;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: 150%; /* 21px */
+  /* body_Regular */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 21px */
 }
 
 .like-button {
@@ -443,7 +490,8 @@ line-height: 150%; /* 21px */
 
 .like-button.is-liked img,
 .clothing-card__heart.is-liked img {
-  filter: invert(37%) sepia(96%) saturate(2672%) hue-rotate(333deg) brightness(101%) contrast(96%);
+  filter: invert(37%) sepia(96%) saturate(2672%) hue-rotate(333deg)
+    brightness(101%) contrast(96%);
 }
 
 .weather-chip {
@@ -586,9 +634,16 @@ line-height: 150%; /* 21px */
 }
 
 .question-card a {
-  font-size: 10px;
-  font-weight: 900;
   white-space: nowrap;
+  color: var(--Foundation-White-Light, #FFF);
+text-align: right;
+font-feature-settings: 'liga' off, 'clig' off;
+/* Caption_Medium */
+font-family: Pretendard;
+font-size: 12px;
+font-style: normal;
+font-weight: 500;
+line-height: 103%; /* 12.36px */
 }
 
 .section-heading {
@@ -842,7 +897,8 @@ line-height: 150%; /* 21px */
   width: 10px;
   height: 10px;
   object-fit: contain;
-  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg) brightness(103%) contrast(101%);
+  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg)
+    brightness(103%) contrast(101%);
 }
 
 .filter-menu {
@@ -1018,7 +1074,8 @@ line-height: 150%; /* 21px */
 
 .bottom-nav__item.active .bottom-nav__icon {
   opacity: 1;
-  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg) brightness(103%) contrast(101%);
+  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg)
+    brightness(103%) contrast(101%);
 }
 
 .placeholder-page {
@@ -1447,7 +1504,19 @@ line-height: 150%; /* 21px */
   height: 62px;
   border-radius: 10px 10px 4px 4px;
   background: #cbe6fb;
-  clip-path: polygon(18% 0, 36% 0, 50% 12%, 64% 0, 82% 0, 100% 28%, 82% 42%, 82% 100%, 18% 100%, 18% 42%, 0 28%);
+  clip-path: polygon(
+    18% 0,
+    36% 0,
+    50% 12%,
+    64% 0,
+    82% 0,
+    100% 28%,
+    82% 42%,
+    82% 100%,
+    18% 100%,
+    18% 42%,
+    0 28%
+  );
 }
 
 .today-clothes-shape--pants {
@@ -1455,7 +1524,15 @@ line-height: 150%; /* 21px */
   height: 76px;
   border-radius: 5px 5px 13px 13px;
   background: #73612e;
-  clip-path: polygon(18% 0, 82% 0, 76% 100%, 55% 100%, 50% 32%, 45% 100%, 24% 100%);
+  clip-path: polygon(
+    18% 0,
+    82% 0,
+    76% 100%,
+    55% 100%,
+    50% 32%,
+    45% 100%,
+    24% 100%
+  );
 }
 
 .today-clothes-shape--outer {
@@ -1492,14 +1569,35 @@ line-height: 150%; /* 21px */
   width: 54px;
   height: 72px;
   background: #9ac9ff;
-  clip-path: polygon(24% 0, 36% 0, 45% 21%, 55% 21%, 64% 0, 76% 0, 100% 100%, 0 100%);
+  clip-path: polygon(
+    24% 0,
+    36% 0,
+    45% 21%,
+    55% 21%,
+    64% 0,
+    76% 0,
+    100% 100%,
+    0 100%
+  );
 }
 
 .today-clothes-shape--flowerTee {
   width: 69px;
   height: 62px;
   background: #ffffff;
-  clip-path: polygon(18% 0, 36% 0, 50% 12%, 64% 0, 82% 0, 100% 25%, 82% 40%, 82% 100%, 18% 100%, 18% 40%, 0 25%);
+  clip-path: polygon(
+    18% 0,
+    36% 0,
+    50% 12%,
+    64% 0,
+    82% 0,
+    100% 25%,
+    82% 40%,
+    82% 100%,
+    18% 100%,
+    18% 40%,
+    0 25%
+  );
 }
 
 .today-clothes-shape--flowerTee::before,
@@ -1527,8 +1625,16 @@ line-height: 150%; /* 21px */
   height: 72px;
   border-radius: 24px 24px 3px 3px;
   background:
-    repeating-linear-gradient(0deg, transparent 0 8px, rgba(0, 0, 0, 0.18) 8px 10px),
-    repeating-linear-gradient(90deg, transparent 0 8px, rgba(0, 0, 0, 0.18) 8px 10px),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 8px,
+      rgba(0, 0, 0, 0.18) 8px 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 8px,
+      rgba(0, 0, 0, 0.18) 8px 10px
+    ),
     #9aa7a5;
 }
 
@@ -1659,7 +1765,10 @@ line-height: 150%; /* 21px */
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: conic-gradient(var(--foundation-blue-normal) 0 60%, #e8f4ff 60% 100%);
+  background: conic-gradient(
+    var(--foundation-blue-normal) 0 60%,
+    #e8f4ff 60% 100%
+  );
 }
 
 .usage-donut > div {
@@ -2199,7 +2308,8 @@ line-height: 150%; /* 21px */
   width: 18px;
   height: 18px;
   object-fit: contain;
-  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg) brightness(103%) contrast(101%);
+  filter: invert(63%) sepia(78%) saturate(1837%) hue-rotate(187deg)
+    brightness(103%) contrast(101%);
 }
 
 .add-next-button {
@@ -2460,8 +2570,10 @@ line-height: 150%; /* 21px */
   align-self: center;
   justify-self: end;
   background:
-    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) 0 50% / 6px 6px no-repeat,
-    linear-gradient(135deg, #a8a8a8 50%, transparent 50%) 4px 50% / 6px 6px no-repeat;
+    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) 0 50% / 6px 6px
+      no-repeat,
+    linear-gradient(135deg, #a8a8a8 50%, transparent 50%) 4px 50% / 6px 6px
+      no-repeat;
 }
 
 .change-next-button {
@@ -2664,8 +2776,10 @@ line-height: 150%; /* 21px */
   outline: 0;
   appearance: none;
   background:
-    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) calc(100% - 8px) 50% / 6px 6px no-repeat,
-    linear-gradient(135deg, #a8a8a8 50%, transparent 50%) calc(100% - 4px) 50% / 6px 6px no-repeat;
+    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) calc(100% - 8px) 50% /
+      6px 6px no-repeat,
+    linear-gradient(135deg, #a8a8a8 50%, transparent 50%) calc(100% - 4px) 50% /
+      6px 6px no-repeat;
   color: #8f8f8f;
   font-size: 12px;
   font-weight: 800;
@@ -2714,8 +2828,10 @@ line-height: 150%; /* 21px */
   align-self: center;
   justify-self: end;
   background:
-    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) 0 50% / 6px 6px no-repeat,
-    linear-gradient(-45deg, transparent 50%, #a8a8a8 50%) 100% 50% / 6px 6px no-repeat;
+    linear-gradient(45deg, transparent 50%, #a8a8a8 50%) 0 50% / 6px 6px
+      no-repeat,
+    linear-gradient(-45deg, transparent 50%, #a8a8a8 50%) 100% 50% / 6px 6px
+      no-repeat;
   transform: rotate(45deg);
 }
 
