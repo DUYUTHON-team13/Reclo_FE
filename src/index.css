@@ -1822,14 +1822,25 @@ a {
 
 .report-item-card__actions {
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
   padding: 0 8px 9px;
 }
 
+.donate-button,
 .style-button {
   height: 27px;
+  min-width: 0;
   border-radius: 5px;
   font-size: 10px;
   font-weight: 900;
+  white-space: nowrap;
+}
+
+.donate-button {
+  border: 1px solid #b9dcff;
+  background: #ffffff;
+  color: var(--foundation-blue-normal);
 }
 
 .style-button {

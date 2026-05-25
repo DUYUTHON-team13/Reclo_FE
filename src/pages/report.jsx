@@ -260,6 +260,15 @@ function Report() {
               </div>
               <div className="report-item-card__actions">
                 <button
+                  className="donate-button"
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  기부하기
+                </button>
+                <button
                   className="style-button"
                   type="button"
                   onClick={(event) => {
