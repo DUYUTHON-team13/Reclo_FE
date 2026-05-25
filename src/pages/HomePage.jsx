@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import heartIcon from "../assets/image/icon/Heart_01.png";
 import toastIcon from "../assets/image/icon/Frame 2147227879.png";
@@ -28,6 +28,23 @@ const unwornClothes = [
 const weatherLatitude = import.meta.env.VITE_WEATHER_LATITUDE ?? 37.5665;
 const weatherLongitude = import.meta.env.VITE_WEATHER_LONGITUDE ?? 126.978;
 
+const RECOMMENDATION_CACHE_KEY = `home_recommendations_${new Date().toISOString().slice(0, 10)}`;
+
+function loadRecommendationCache() {
+  try {
+    const raw = localStorage.getItem(RECOMMENDATION_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveRecommendationCache(pages, activeIndex) {
+  try {
+    localStorage.setItem(RECOMMENDATION_CACHE_KEY, JSON.stringify({ pages, activeIndex }));
+  } catch {}
+}
+
 function HomePage() {
   const maxRecommendations = 5;
   const navigate = useNavigate();
@@ -36,20 +53,28 @@ function HomePage() {
   const [likedOutfit, setLikedOutfit] = useState(false);
   const [temperature, setTemperature] = useState(null);
   const [homeClothes, setHomeClothes] = useState([]);
-  const [todayRecommendation, setTodayRecommendation] = useState(null);
-  const [recommendationPages, setRecommendationPages] = useState([]);
-  const [activeRecommendationIndex, setActiveRecommendationIndex] = useState(0);
-  const [recommendedOutfitItems, setRecommendedOutfitItems] = useState([]);
+  const [todayRecommendation, setTodayRecommendation] = useState(() => loadRecommendationCache()?.pages?.[loadRecommendationCache()?.activeIndex ?? 0] ?? null);
+  const [recommendationPages, setRecommendationPages] = useState(() => (loadRecommendationCache()?.pages ?? []).filter(Boolean));
+  const [activeRecommendationIndex, setActiveRecommendationIndex] = useState(() => loadRecommendationCache()?.activeIndex ?? 0);
+  const [recommendedOutfitItems, setRecommendedOutfitItems] = useState(() => {
+    const cache = loadRecommendationCache();
+    return cache?.pages?.[cache?.activeIndex ?? 0]?.items ?? [];
+  });
   const [isLoadingNextRecommendation, setIsLoadingNextRecommendation] = useState(false);
   const [isSubmittingWearLog, setIsSubmittingWearLog] = useState(false);
   const [weeklyCarbonSummary, setWeeklyCarbonSummary] = useState(null);
   const [toastMessage, setToastMessage] = useState(location.state?.toast ?? "");
   const displayRecommendedItems =
     recommendedOutfitItems.length > 0 ? recommendedOutfitItems : recommendedItems;
-  const displayClothes =
-    homeClothes.length > 0
-      ? homeClothes.filter((item) => item.unwornDays >= 30).slice(0, 2)
-      : unwornClothes;
+  const displayClothes = useMemo(() => {
+    if (homeClothes.length === 0) return unwornClothes;
+    const unworn = homeClothes.filter((item) => item.unwornDays >= 30);
+    for (let i = unworn.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [unworn[i], unworn[j]] = [unworn[j], unworn[i]];
+    }
+    return unworn.slice(0, 2);
+  }, [homeClothes]);
 
   useEffect(() => {
     getCurrentWeather({
@@ -67,11 +92,19 @@ function HomePage() {
       latitude: weatherLatitude,
       longitude: weatherLongitude,
     })
-      .then(async (recommendation) => {
-        setTodayRecommendation(recommendation);
-        setRecommendedOutfitItems(recommendation.items);
-        setRecommendationPages([recommendation]);
-        setActiveRecommendationIndex(0);
+      .then((recommendation) => {
+        const idx = (recommendation.recommendationOrder ?? 1) - 1;
+        setRecommendationPages((prev) => {
+          const next = [...prev];
+          next[idx] = recommendation;
+          return next;
+        });
+        setActiveRecommendationIndex((prev) => {
+          const restored = loadRecommendationCache()?.activeIndex ?? 0;
+          return prev !== 0 ? prev : restored !== 0 ? restored : idx;
+        });
+        setTodayRecommendation((prev) => prev ?? recommendation);
+        setRecommendedOutfitItems((prev) => prev.length > 0 ? prev : recommendation.items);
       })
       .catch((error) => {
         console.log("AI recommendation load failed:", error.message);
@@ -92,6 +125,22 @@ function HomePage() {
       .catch((error) => {
         console.log("주간 탄소 절감 요약 불러오기 실패:", error.message);
       });
+  }, []);
+
+  useEffect(() => {
+    if (recommendationPages.length === 0) return;
+    saveRecommendationCache(recommendationPages, activeRecommendationIndex);
+  }, [recommendationPages, activeRecommendationIndex]);
+
+  useEffect(() => {
+    if (activeRecommendationIndex === 0) return;
+    window.requestAnimationFrame(() => {
+      recommendationCarouselRef.current?.scrollTo({
+        left: recommendationCarouselRef.current.clientWidth * activeRecommendationIndex,
+        behavior: "instant",
+      });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -227,8 +276,8 @@ function HomePage() {
           ref={recommendationCarouselRef}
           onScroll={handleRecommendationScroll}
         >
-          {(recommendationPages.length > 0
-            ? recommendationPages
+          {(recommendationPages.filter(Boolean).length > 0
+            ? recommendationPages.filter(Boolean)
             : [{ id: "fallback", items: displayRecommendedItems }]
           ).map((recommendation, recommendationIndex) => (
             <div className="outfit-page" key={recommendation.id ?? recommendationIndex}>
@@ -241,7 +290,7 @@ function HomePage() {
                       }`}
                       style={{
                         background: item.image
-                          ? `url(${item.image}) center / cover no-repeat`
+                          ? `url("${item.image}") center / cover no-repeat`
                           : item.color,
                       }}
                     />
@@ -254,7 +303,7 @@ function HomePage() {
         </div>
 
         <div className="dot-row" aria-hidden="true">
-          {(recommendationPages.length > 0 ? recommendationPages : [null]).map((_, index) => (
+          {Array.from({ length: maxRecommendations }, (_, index) => (
             <span className={index === activeRecommendationIndex ? "active" : ""} key={index} />
           ))}
         </div>
